@@ -80,7 +80,7 @@
               </div>
 
               <!-- Modal -->
-              <product-modal :isNew="isNew" :temp-product="tempProduct" @emit-data="getProductData"></product-modal>
+              <product-modal :is-new="isNew" :temp-product="tempProduct" @emit-data="getProductData"></product-modal>
               <del-product-modal :product-data="tempProduct" @emit-id="delProduct"></del-product-modal>
             </div>
         </section>

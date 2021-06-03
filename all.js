@@ -150,7 +150,10 @@ const app = Vue.createApp({
         },
         addProduct(tempProduct = {}){
             let vm = this;
-            if(Object.keys(tempProduct).length === 0) return
+            if(Object.keys(tempProduct).length === 0) {
+                alert('資料未填寫');
+                return
+            }
             axios.post(vm.apiPath.addProduct, { data: tempProduct })
                 .then((res) => {
                     if(res.data.success){
@@ -162,16 +165,21 @@ const app = Vue.createApp({
                     }
                 })
                 .catch(err => {
+                    if( Array.isArray(err) ){
+                        let str = '';
+                        err.forEach(s=>str+=s);
+                        alert(str);
+                    }
                     console.log(err);
                 })
         },
         getProductData(data){
             //根據productModal回傳的data判斷是編輯還是新增產品去選擇功能
-            // console.log(data);
-            if(data.isNew){
-                this.addProduct(data.data);
+            let productData = {...data};
+            if(productData.isNew){
+                this.addProduct(productData.data);
             } else {
-                this.updateProduct(data.data);
+                this.updateProduct(productData.data);
             }
         },
         updateProduct(tempProduct = {}){
@@ -316,10 +324,10 @@ const productModal = {
                 <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
                     取消
                 </button>
-                <button v-if="isNew" type="button" class="btn btn-primary" @click="sendData(true,tempProduct)">
+                <button v-if="isNew" type="button" class="btn btn-primary" @click="sendData(isNew,tempProduct)">
                     確認
                 </button>
-                <button v-else type="button" class="btn btn-warning" @click="sendData(false,tempProduct)">
+                <button v-else type="button" class="btn btn-warning" @click="sendData(isNew,tempProduct)">
                     確認
                 </button>
                 </div>
@@ -333,7 +341,8 @@ const productModal = {
             this.tempProduct.imagesUrl.push('');
         },
         sendData(isNew, productData){
-            // console.log(isNew);
+            // productData = productData || {};
+            // console.log(isNew, productData);
             this.$emit('emit-data', { isNew, data: productData })
         }
     }
